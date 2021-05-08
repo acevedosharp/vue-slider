@@ -1,10 +1,13 @@
 <template>
   <div>
-    <div class="slider-container"
+    <div ref="sliderContainer"
+         class="slider-container"
          @mouseenter="deactivateAutoMove"
          @mouseleave="activateAutoMove">
 
-      <button class="inline" @click="moveSlider('left')">
+      <button ref="leftButton"
+              class="inline"
+              @click="moveSlider('left')">
         <
       </button>
 
@@ -17,7 +20,9 @@
         <slot/>
       </div>
 
-      <button class="inline" @click="moveSlider('right')">
+      <button ref="rightButton"
+              class="inline"
+              @click="moveSlider('right')">
         >
       </button>
 
@@ -61,6 +66,11 @@ export default {
       type: Number,
       required: false,
       default: 2000
+    },
+    hideButtonsBoundary: {
+      type: Number,
+      required: false,
+      default: 960
     }
   },
   mounted() {
@@ -75,6 +85,23 @@ export default {
     slider.addEventListener("touchstart", this.handleTouchStart, false);
     slider.addEventListener("touchmove", this.handleTouchMove, false);
     slider.addEventListener("touchend", this.handleDragEnd, false);
+
+    const setButtonsDisplay = (label) => {
+      this.$refs.leftButton.style.display = label
+      this.$refs.rightButton.style.display = label
+    }
+
+    if (window.innerWidth <= this.hideButtonsBoundary) {
+      setButtonsDisplay('none')
+    }
+
+    window.onresize = (e) => {
+      if (e.target.innerWidth <= this.hideButtonsBoundary) {
+        setButtonsDisplay('none')
+      } else {
+        setButtonsDisplay('inline-block')
+      }
+    }
   },
   methods: {
     activateAutoMove() {
