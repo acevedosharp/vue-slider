@@ -1,4 +1,4 @@
-# vue-sider
+# vue-slider
 
 ## Project setup
 ```
