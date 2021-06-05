@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>vue-slider</h1>
-    <Slider :step="1" :do-auto-move="true" :auto-move-period="5100">
+    <Slider :step="1" :do-auto-move="true" :auto-move-period="5100" :width="214">
       <Post v-for="post in posts"
             :key="post.id"
             :post-data="post"/>
