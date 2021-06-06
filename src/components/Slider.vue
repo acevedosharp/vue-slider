@@ -1,32 +1,30 @@
 <template>
-  <div>
-    <div ref="sliderContainer"
-         class="slider-container"
-         @mouseenter="deactivateAutoMoveWithChecks"
-         @mouseover="deactivateAutoMoveWithChecks"
-         @mouseleave="activateAutoMoveWithChecks">
+  <div ref="sliderContainer"
+       class="slider-container"
+       @mouseenter="deactivateAutoMoveWithChecks"
+       @mouseover="deactivateAutoMoveWithChecks"
+       @mouseleave="activateAutoMoveWithChecks">
 
-      <button ref="leftButton"
-              class="inline side-button"
-              @click="moveSlider('left')">
+    <button ref="leftButton"
+            class="inline side-button"
+            @click="moveSlider('left')">
         <span :class="this.leftButtonDisabled ? 'disabled-arrow' : 'normal-arrow'">
           <
         </span>
-      </button>
+    </button>
 
-      <div ref="slider"
-           class="slider inline disabled-touch-scrolling">
-        <slot/>
-      </div>
+    <div ref="slider"
+         class="slider inline disabled-touch-scrolling">
+      <slot/>
+    </div>
 
-      <button ref="rightButton"
-              class="inline side-button"
-              @click="moveSlider('right')">
+    <button ref="rightButton"
+            class="inline side-button"
+            @click="moveSlider('right')">
         <span :class="this.rightButtonDisabled ? 'disabled-arrow' : 'normal-arrow'">
           >
         </span>
-      </button>
-    </div>
+    </button>
   </div>
 </template>
 
@@ -50,7 +48,8 @@ export default {
       isInMovement: false,
       targetSlider: {},
       interpolation: [],
-      callback: () => {},
+      callback: () => {
+      },
       currentIndex: 0,
 
       dragStep: {
@@ -90,6 +89,10 @@ export default {
       type: Number,
       required: true
     },
+    sliderHeight: {
+      type: String,
+      required: true
+    },
     interpolationType: {
       type: String,
       required: false,
@@ -104,6 +107,8 @@ export default {
   mounted() {
     this.updateElementWidth()
     this.updateSideButtons()
+
+    this.$refs.slider.style.height = this.sliderHeight
 
     if (this.doAutoMove) {
       this.autoMoveIntervalId.push(setInterval(() => this.doAutoMoveWithChecks(), this.autoMovePeriod))
@@ -163,7 +168,8 @@ export default {
       if (this.dragStep.doMovement) {
         this.moveSlider(this.dragStep.targetDirection)
       } else {
-        this.doScrollInitiator(this.dragStep.initialScrollLeft, () => {})
+        this.doScrollInitiator(this.dragStep.initialScrollLeft, () => {
+        })
       }
       this.currDiff = 0
     },
@@ -272,17 +278,17 @@ export default {
         const slider = this.$refs.slider
         const max = Math.max(targetX, slider.scrollLeft)
         const min = Math.min(targetX, slider.scrollLeft)
-        const fullRangeBetween = [... Array(Math.round(max - min + 1)). keys()].map(i => i + min)
+        const fullRangeBetween = [...Array(Math.round(max - min + 1)).keys()].map(i => i + min)
 
         if (targetX < slider.scrollLeft)
           fullRangeBetween.reverse()
 
         let interpolation = []
         if (this.interpolationType === 'linear') {
-          const stepSize = (max-min) / 16
+          const stepSize = (max - min) / 16
           interpolation.push(fullRangeBetween[0])
           for (let i = 1; i <= 14; i++) {
-            interpolation.push(fullRangeBetween[Math.round(stepSize*i)])
+            interpolation.push(fullRangeBetween[Math.round(stepSize * i)])
           }
           interpolation.push(fullRangeBetween.lastItem)
         } else if (this.interpolationType === 'smooth') {
@@ -299,10 +305,10 @@ export default {
 
           const frb = fullRangeBetween.length - 1
           interpolation.push(fullRangeBetween[0])
-          for (let i = 1; i <= mask.length-2; i++) {
-            interpolation.push(fullRangeBetween[Math.round(maskAcc[i]*frb)])
+          for (let i = 1; i <= mask.length - 2; i++) {
+            interpolation.push(fullRangeBetween[Math.round(maskAcc[i] * frb)])
           }
-          interpolation.push(fullRangeBetween[fullRangeBetween.length-1])
+          interpolation.push(fullRangeBetween[fullRangeBetween.length - 1])
         } else {
           throw Error('No such interpolationType')
         }
@@ -363,6 +369,10 @@ export default {
 </script>
 
 <style scoped>
+.slider-container {
+  width: 100%
+}
+
 ::-webkit-scrollbar {
   display: none;
 }
@@ -383,21 +393,22 @@ export default {
   white-space: nowrap;
   overflow-x: scroll;
   overflow-scrolling: touch;
+  width: 100%
 }
 
 .side-button {
   width: 100px;
   font-size: 50px;
-  color: rgb(0,106,255);
+  color: rgb(0, 106, 255);
 }
 
 .normal-arrow {
   font-size: 35px;
-  color: rgb(0,106,255);
+  color: rgb(0, 106, 255);
 }
 
 .disabled-arrow {
   font-size: 35px;
-  color: rgba(0,106,255,0.3);
+  color: rgba(0, 106, 255, 0.3);
 }
 </style>
